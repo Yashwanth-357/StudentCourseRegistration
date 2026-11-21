@@ -46,9 +46,6 @@ namespace StudentCourseRegistration.Controllers
             return View(new Student());
         }
 
-        // POST: /Student/Create  -> receives the submitted form
-        // [Bind] lists the only fields we accept from the form. Id and RegisteredOn are
-        // excluded so a user cannot set them by tampering with the request ("over-posting").
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Name,Email,Course,Semester")] Student student)
