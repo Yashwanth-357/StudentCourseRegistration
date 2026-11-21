@@ -1,0 +1,90 @@
+@model Student
+@{
+    ViewData["Title"] = "Register student";
+
+    // Items for the two dropdowns.
+    var courseItems = CourseCatalog.Courses.Select(c => new SelectListItem(c, c));
+    var semesterItems = Enumerable.Range(1, 8).Select(n => new SelectListItem($"Semester {n}", n.ToString()));
+}
+
+<section class="container section">
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Register a student</h1>
+            <p class="page-sub">Fill in the details below to enrol a student in a course.</p>
+        </div>
+        <a class="btn btn-outline-brand" asp-action="Index"><i class="bi bi-arrow-left me-1"></i>Back to list</a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Side note -->
+        <div class="col-lg-4 order-lg-2">
+            <aside class="info-card">
+                <h2 class="h5 mb-3">Before you submit</h2>
+                <ul class="info-list">
+                    <li><i class="bi bi-check2-circle"></i>Name must be 3&ndash;60 characters.</li>
+                    <li><i class="bi bi-check2-circle"></i>Each email can be registered only once.</li>
+                    <li><i class="bi bi-check2-circle"></i>Choose a course and a semester from 1 to 8.</li>
+                </ul>
+            </aside>
+        </div>
+
+        <!-- Form -->
+        <div class="col-lg-8 order-lg-1">
+            <div class="panel">
+                <div class="panel-body form-body">
+                    <form asp-action="Create" method="post" novalidate>
+                        @* Shows errors that are not tied to one field. *@
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input asp-for="Name" class="form-control" placeholder="e.g. Ananya Krishnan" autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="Name" class="field-error"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Email" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control" placeholder="name@college.edu" autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="Email" class="field-error"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Course" class="form-label"></label>
+                                <select asp-for="Course" asp-items="courseItems" class="form-select">
+                                    <option value="">Select a course</option>
+                                </select>
+                                <span asp-validation-for="Course" class="field-error"></span>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Semester" class="form-label"></label>
+                                <select asp-for="Semester" asp-items="semesterItems" class="form-select">
+                                    <option value="">Select a semester</option>
+                                </select>
+                                <span asp-validation-for="Semester" class="field-error"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 pt-2">
+                            <button type="submit" class="btn btn-brand px-4">
+                                <i class="bi bi-person-check me-1"></i>Register student
+                            </button>
+                            <a class="btn btn-outline-brand" asp-action="Index">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

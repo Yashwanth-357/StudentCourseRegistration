@@ -1,0 +1,115 @@
+@model StudentListViewModel
+@{
+    ViewData["Title"] = "Students";
+}
+
+<section class="container section">
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">Students</h1>
+            <p class="page-sub">All registered students. Search by name or email, or filter by course.</p>
+        </div>
+        <a class="btn btn-brand" asp-action="Create"><i class="bi bi-plus-lg me-1"></i>Register student</a>
+    </div>
+
+    <!-- Search + filter (a GET form: values appear in the URL, so results can be bookmarked) -->
+    <form method="get" asp-action="Index" class="filter-bar">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-6">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="search" name="searchTerm" value="@Model.SearchTerm" class="form-control"
+                           placeholder="Search by name or email..." autocomplete="off" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="course" class="form-select" aria-label="Filter by course">
+                    <option value="">All courses</option>
+                    @foreach (var courseName in CourseCatalog.Courses)
+                    {
+                        <option value="@courseName" selected="@(courseName == Model.SelectedCourse)">@courseName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-brand flex-fill">Apply</button>
+                @if (Model.IsFiltered)
+                {
+                    <a class="btn btn-outline-brand" asp-action="Index">Clear</a>
+                }
+            </div>
+        </div>
+    </form>
+
+    <div class="panel">
+        <div class="panel-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">
+                Showing @Model.Students.Count of @Model.TotalCount @(Model.TotalCount == 1 ? "student" : "students")
+            </span>
+            @if (Model.IsFiltered)
+            {
+                <span class="chip chip-muted"><i class="bi bi-funnel me-1"></i>Filtered</span>
+            }
+        </div>
+
+        @if (Model.Students.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-modern align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>ID</th>
+                            <th>Course</th>
+                            <th>Semester</th>
+                            <th>Registered</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in Model.Students)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <span class="avatar tone-@student.AvatarTone">@student.Initials</span>
+                                        <div>
+                                            <div class="fw-semibold">@student.Name</div>
+                                            <div class="small text-muted">@student.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-muted">@student.StudentCode</td>
+                                <td><span class="chip chip-course">@student.Course</span></td>
+                                <td>Sem @student.Semester</td>
+                                <td class="text-muted">@student.RegisteredOn.ToString("dd MMM yyyy")</td>
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-outline-brand" asp-action="Details" asp-route-id="@student.Id">
+                                        View <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-search"></i>
+                <h2 class="h5">No students found</h2>
+                @if (Model.IsFiltered)
+                {
+                    <p class="text-muted">Nothing matches your search. Try a different keyword or course.</p>
+                    <a class="btn btn-outline-brand" asp-action="Index">Clear filters</a>
+                }
+                else
+                {
+                    <p class="text-muted">Nobody has been registered yet.</p>
+                    <a class="btn btn-brand" asp-action="Create">Register the first student</a>
+                }
+            </div>
+        }
+    </div>
+</section>
